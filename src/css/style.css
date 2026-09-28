@@ -1,0 +1,534 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Work+Sans:wght@300;400;500;600;700&display=swap');
+
+/* ==========================================================================
+   KLEUREN EN LETTERTYPES
+   Alle kleuren en lettertypes staan hier op één plek. Wil je bijvoorbeeld
+   de goudkleurige accentkleur (--color-accent) aanpassen, dan verandert
+   dat automatisch overal in de pagina waar die kleur wordt gebruikt.
+   ========================================================================== */
+:root {
+  --color-background: #1a1714;       /* achtergrond van de hele pagina */
+  --color-text: #f0ebe3;             /* gewone tekstkleur */
+  --color-card: #242018;             /* achtergrond van kaarten */
+  --color-accent: #c8a96e;           /* goudkleurige accentkleur (knoppen, prijzen) */
+  --color-accent-text: #1a1714;      /* tekstkleur bovenop de accentkleur */
+  --color-input-background: #2e2820; /* achtergrond van invoervelden */
+  --color-text-muted: #7a6f63;       /* gedempte tekst, zoals labels */
+  --color-border: #3a3028;           /* dunne lijntjes tussen elementen */
+  --color-success: #4ade80;          /* groen, voor geslaagde meldingen */
+  --color-danger: #f87171;           /* rood, voor foutmeldingen */
+
+  --font-mono: 'JetBrains Mono', monospace;  /* voor cijfers en prijzen */
+  --font-sans: 'Work Sans', sans-serif;      /* voor gewone tekst */
+}
+
+/* ==========================================================================
+   BASIS
+   ========================================================================== */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 2px;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+button {
+  font-family: var(--font-sans);
+}
+
+/* ==========================================================================
+   HEADER
+   Bovenaan voorraad_beheer.php: logo, titel, de insert/orders-knoppen en
+   de ingelogde gebruiker met uitlogknop.
+   ========================================================================== */
+.header {
+  border-bottom: 1px solid var(--color-border);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.header .titel img {
+  height: auto;
+  width: 200px;
+  display: block;
+}
+
+.inNout-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.inNout {
+  display: flex;
+  gap: 8px;
+}
+.inNoutB button {
+  padding: 8px 16px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.inNoutB button:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.inNout-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+.inNout-user span {
+  color: var(--color-text);
+}
+
+/* Melding bovenaan de voorraadpagina, bijv. na het opslaan van een ontvangst */
+.melding-banner {
+  background: rgba(20, 83, 45, .2);
+  border-bottom: 1px solid rgba(21, 128, 61, .3);
+  color: var(--color-success);
+  padding: 12px 32px;
+  font-size: 0.875rem;
+}
+
+/* ==========================================================================
+   HOOFDINDELING: zijbalk met filters + de productgrid ernaast
+   ========================================================================== */
+.main-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 24px 32px;
+}
+
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  padding: 20px;
+}
+
+.content {
+  flex: 1;
+  min-width: 0; /* voorkomt dat de grid de pagina breder maakt dan het scherm */
+}
+
+/* ==========================================================================
+   FILTERS (in de zijbalk)
+   ========================================================================== */
+.filter-opties p {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-text-muted);
+  margin: 0 0 16px;
+}
+.filter-selects {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.filter-select {
+  width: 100%;
+  background: var(--color-input-background);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 0.875rem;
+  padding: 8px 12px;
+  outline: none;
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+.filter-select:focus {
+  border-color: var(--color-accent);
+}
+.reset-filters {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+}
+.reset-filters:hover {
+  color: var(--color-accent);
+}
+
+/* ==========================================================================
+   PAGINERING (onderaan de zijbalk)
+   ========================================================================== */
+.pagination {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.page-numbers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+}
+.page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+.page-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.page-btn.active {
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
+  background: var(--color-accent);
+}
+.page-btn.disabled {
+  opacity: .35;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   PRODUCTGRID (de stukken leer, als kaartjes)
+   ========================================================================== */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.product-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Rij bovenin de kaart met het label "leertype" en de waarde ernaast */
+.naam-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+.naam-box span:first-child {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-text-muted);
+}
+.naam-box span:last-child {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.specs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+.spec-row span:first-child {
+  color: var(--color-text-muted);
+}
+.spec-row span:last-child {
+  font-family: var(--font-mono);
+}
+
+.hoeveelheid-box {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-align: right;
+}
+
+/* ==========================================================================
+   SUBPAGINA'S: login, registreren, ontvangst invoeren, bestellingen
+   Deze pagina's hebben geen zijbalk, maar één of meer gecentreerde
+   "kaarten" op de pagina.
+   ========================================================================== */
+body.subpage {
+  padding: 32px;
+}
+body.subpage-gecentreerd {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.pagina-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.terug-link {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+.terug-link:hover {
+  color: var(--color-accent);
+}
+
+/* Een "kaart": een omkaderd blok met wat inhoud erin */
+.pagina-kaart {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  padding: 24px;
+}
+
+/* Kleinere kaart voor login/registreren, gecentreerd op de pagina */
+.auth-kaart {
+  width: 100%;
+  max-width: 360px;
+}
+.auth-kaart form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.auth-kaart p {
+  margin-top: 16px;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* Bredere kaart voor de invoerformulieren en bestelde overzichten */
+.invoer-kaart .rij-hint {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin: -8px 0 16px;
+}
+
+/* ==========================================================================
+   MELDINGEN (foutmeldingen en succesmeldingen boven een formulier)
+   ========================================================================== */
+.melding {
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+  border: 1px solid;
+}
+.melding-fout {
+  color: var(--color-danger);
+  background: rgba(127, 29, 29, .2);
+  border-color: rgba(153, 27, 27, .3);
+}
+.melding-succes {
+  color: var(--color-success);
+  background: rgba(20, 83, 45, .2);
+  border-color: rgba(21, 128, 61, .3);
+}
+
+.geen-data {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* ==========================================================================
+   FORMULIERVELDEN
+   ========================================================================== */
+.form-input {
+  width: 100%;
+  background: var(--color-input-background);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 0.875rem;
+  padding: 10px 12px;
+  outline: none;
+  font-family: var(--font-sans);
+}
+.form-input:focus {
+  border-color: var(--color-accent);
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.btn-primary:hover {
+  opacity: .9;
+}
+
+/* ==========================================================================
+   ONTVANGST INVOEREN (insert.php)
+   ========================================================================== */
+.ontvangst-header {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.ontvangst-header label {
+  flex: 1;
+  min-width: 180px;
+}
+
+/* Zorgt dat een brede tabel op een klein scherm opzij kan scrollen,
+   in plaats van de hele pagina breder te maken. */
+.tabel-scroll {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.items-table input {
+  width: 100%;
+  min-width: 80px;
+  background: var(--color-input-background);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  padding: 6px 8px;
+  font-family: var(--font-sans);
+  outline: none;
+}
+.items-table input:focus {
+  border-color: var(--color-accent);
+}
+
+/* ==========================================================================
+   BESTELLINGEN (orders.php)
+   ========================================================================== */
+.order-kop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.order-status {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+}
+.order-meta {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+}
+
+.order-items tfoot td {
+  font-weight: 700;
+  font-family: var(--font-mono);
+  border-bottom: none;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-accent);
+}
