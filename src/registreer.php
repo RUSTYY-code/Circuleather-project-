@@ -1,6 +1,8 @@
 <?php
+    // Start een sessie om geregistreerde gebruikers direct door te kunnen sturen.
     session_start();
 
+    // Ingelogde gebruikers hoeven geen nieuw account aan te maken.
     if (isset($_SESSION['ingelogd'])) {
         header("Location: vooraad_beheer.php");
         exit();
@@ -9,6 +11,7 @@
     $conn = require_once "partials/dbconnection.php";
     $foutmelding = '';
 
+    // Verwerk het registratieformulier wanneer dit met POST wordt verzonden.
     if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST['action'] ?? '') === 'registreer') {
         $gebruiker = trim($_POST['username'] ?? '');
         $wachtwoord = $_POST['password'] ?? '';
@@ -22,6 +25,7 @@
             $bestaatAl = $checkStmt->get_result()->fetch_assoc();
             $checkStmt->close();
 
+            // Voorkom dubbele gebruikersnamen voordat het account wordt opgeslagen.
             if ($bestaatAl) {
                 $foutmelding = 'Deze gebruikersnaam bestaat al.';
             } else {

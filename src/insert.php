@@ -1,4 +1,5 @@
 <?php
+    // Alleen gebruikers met invoerrechten mogen nieuwe ontvangsten beheren.
     require_once "partials/session_check.php";
 
     if (!($_SESSION['mag_insert'] ?? false)) {
@@ -11,6 +12,7 @@
     $fout = '';
     $aantalRijen = 5;
 
+    // Verwerk wijzigingen of verwijderingen van bestaande voorraadstukken.
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($_POST['action'] ?? '', ['wijzig_stuk', 'verwijder_stuk'], true)) {
         $voorraadId = (int) ($_POST['voorraad_id'] ?? 0);
 
@@ -121,6 +123,7 @@
         }
     }
 
+    // Verwerk een nieuwe ontvangst met maximaal vijf leerstukken.
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['action'])) {
         $herkomst = trim($_POST['herkomst'] ?? '');
         $datum = $_POST['datum'] ?? date('Y-m-d');
@@ -189,6 +192,7 @@
         }
     }
 
+    // Haal alle voorraadstukken op voor het beheeroverzicht.
     $ontvangstenStmt = $conn->prepare("SELECT v.id AS voorraad_id, v.bestelling_ID, v.status, v.leertype, v.dikteMM, v.lengteCM, v.breedteCM, v.gewichtG, v.kleur, v.prijs, o.ID AS ontvangst_id, o.herkomst, o.datum, oi.bruikbaarheid FROM voorraad v LEFT JOIN OntvangstItem oi ON oi.voorraad_id = v.id LEFT JOIN Ontvangst o ON o.ID = oi.ontvangst_id ORDER BY v.id DESC");
     $ontvangstenStmt->execute();
     $ontvangstStukken = $ontvangstenStmt->get_result()->fetch_all(MYSQLI_ASSOC);

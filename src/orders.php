@@ -1,4 +1,5 @@
 <?php
+// Controleer eerst de login en de rechten voor het beheren van bestellingen.
     require_once "partials/session_check.php";
 
     if (!($_SESSION['mag_orders'] ?? false)) {
@@ -8,6 +9,7 @@
 
     $conn = require_once "partials/dbconnection.php";
 
+// Maak een bestelling en koppel de geselecteerde beschikbare leerstukken.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'maak_order') {
     $locatie = trim($_POST['locatie'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -54,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'maak_
     exit();
 }
 
+// Werk de gegevens van een bestaande bestelling bij.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'wijzig_order') {
     $id = (int) ($_POST['id'] ?? 0);
     $locatie = trim($_POST['locatie'] ?? '');
@@ -74,10 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'wijzi
     exit();
 }
 
+// Verwijder een bestelling en maak de gekoppelde leerstukken weer beschikbaar.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'verwijder_order') {
     $id = (int) $_POST['id'];
 
-    // Free the leather pieces first, otherwise they stay "besteld" forever
+    // Maak de leerstukken eerst vrij, anders blijven ze voor altijd als besteld staan.
     $stmt = $conn->prepare("UPDATE voorraad SET bestelling_ID = 0, status = 'beschikbaar' WHERE bestelling_ID = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -90,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'verwi
     exit();
 }
 
+    // Haal de bestellingen en de beschikbare leerstukken op voor de pagina.
     $bestellingenStmt = $conn->prepare("SELECT ID, locatie, email, status, besteldatum, verstuurdatum FROM bestellingen ORDER BY besteldatum DESC");
     $bestellingenStmt->execute();
     $bestellingen = $bestellingenStmt->get_result()->fetch_all(MYSQLI_ASSOC);

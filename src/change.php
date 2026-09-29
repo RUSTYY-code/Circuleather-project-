@@ -1,4 +1,5 @@
 <?php
+// Deze pagina is alleen toegankelijk voor gebruikers die voorraad mogen wijzigen.
 require_once "partials/session_check.php";
 
 if (!($_SESSION['mag_wijzigen'] ?? false)) {
@@ -9,6 +10,7 @@ if (!($_SESSION['mag_wijzigen'] ?? false)) {
 $conn = require_once "partials/dbconnection.php";
 $fout = '';
 
+// Valideer en sla de gewijzigde gegevens van één voorraadstuk op.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'wijzig_stuk') {
 	$voorraadId = (int) ($_POST['voorraad_id'] ?? 0);
 	$leertype = trim($_POST['leertype'] ?? '');
@@ -82,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'wijzi
 	exit();
 }
 
+// Lees de filters uit de URL zodat het overzicht dezelfde selectie kan behouden.
 $geselecteerdLeertype = trim($_GET['leertype'] ?? '');
 $geselecteerdKleur = trim($_GET['kleur'] ?? '');
 $geselecteerdDikte = trim($_GET['dikte'] ?? '');
@@ -89,6 +92,7 @@ $geselecteerdMaat = trim($_GET['maat'] ?? '');
 $maatCategorieen = ['A' => [23, 40], 'B' => [40, 60], 'C' => [60, null]];
 $maatCaseSql = "CASE WHEN (v.lengteCM >= 23 AND v.lengteCM < 40) OR (v.breedteCM >= 23 AND v.breedteCM < 40) THEN 'A' WHEN (v.lengteCM >= 40 AND v.lengteCM < 60) OR (v.breedteCM >= 40 AND v.breedteCM < 60) THEN 'B' WHEN v.lengteCM >= 60 OR v.breedteCM >= 60 THEN 'C' END";
 
+// Vul de filteropties alleen met leer dat nog beschikbaar is.
 $leertypeStmt = $conn->query("SELECT DISTINCT leertype FROM voorraad WHERE status != 'besteld' ORDER BY leertype");
 $leertypes = $leertypeStmt->fetch_all(MYSQLI_ASSOC);
 $kleurStmt = $conn->query("SELECT DISTINCT kleur FROM voorraad WHERE status != 'besteld' ORDER BY kleur");
@@ -121,6 +125,7 @@ if ($geselecteerdDikte !== '' && ctype_digit($geselecteerdDikte)) {
 }
 $whereSql = ' WHERE ' . implode(' AND ', $condities);
 
+// Bereken de paginering voor het aantal gevonden voorraadstukken.
 $itemsPerPagina = 12;
 $huidigePagina = max(1, (int) ($_GET['pagina'] ?? 1));
 $totaalStmt = $conn->prepare("SELECT COUNT(*) AS totaal FROM voorraad v" . $whereSql);

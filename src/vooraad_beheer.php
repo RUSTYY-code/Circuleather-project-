@@ -1,8 +1,9 @@
 <?php
+    // Beveilig de voorraadpagina en open daarna de databaseverbinding.
     require_once "partials/session_check.php";
     $conn = require_once "partials/dbconnection.php";
 
-    // Filters (waardes komen automatisch uit de database)
+    // Filters: de gekozen waarden komen uit de URL en worden in de queries gebruikt.
     $geselecteerdLeertype = trim($_GET['leertype'] ?? '');
     $geselecteerdKleur = trim($_GET['kleur'] ?? '');
     $geselecteerdDikte = trim($_GET['dikte'] ?? '');
@@ -97,7 +98,7 @@
     }
     $maatCountsStmt->close();
 
-    // Hoofd-query: ALLE filters samen
+    // Hoofdquery: toon alleen voorraad die aan alle gekozen filters voldoet.
     [$whereSql, $params, $types] = bouwWhereClause([$leertypeConditie, $kleurConditie, $dikteConditie, $maatConditie]);
 
     // filterQuery zorgt dat de paginering-links de actieve filters onthouden
@@ -115,7 +116,7 @@
         $filterQuery .= '&maat=' . urlencode($geselecteerdMaat);
     }
 
-    // Paginering
+    // Bereken welke voorraadpagina en welke rijen moeten worden getoond.
     $itemsPerPagina = 12;
     $huidigePagina = isset($_GET['pagina']) ? max(1, (int) $_GET['pagina']) : 1;
     $offset = ($huidigePagina - 1) * $itemsPerPagina;
