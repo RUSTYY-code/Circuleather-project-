@@ -1,7 +1,7 @@
 <?php
 require_once "partials/session_check.php";
 
-if (!($_SESSION['mag_insert'] ?? false)) {
+if (!($_SESSION['mag_wijzigen'] ?? false)) {
 	header("Location: vooraad_beheer.php");
 	exit();
 }
@@ -168,7 +168,6 @@ $vanafPagina = max(1, $totPagina - 4);
 		<div class="inNout-wrapper">
 			<nav class="inNout">
 				<div class="inNoutB"><a href="vooraad_beheer.php"><button type="button">Voorraad</button></a></div>
-				<div class="inNoutB"><a href="insert.php"><button type="button">Ontvangst</button></a></div>
 				<?php if ($_SESSION['mag_orders'] ?? false): ?>
 					<div class="inNoutB"><a href="orders.php"><button type="button">Bestellingen</button></a></div>
 				<?php endif; ?>
@@ -244,7 +243,6 @@ $vanafPagina = max(1, $totPagina - 4);
 					<h1>Voorraad wijzigen</h1>
 					<p><?php echo $totaalItems; ?> beschikbare voorraadstukken</p>
 				</div>
-				<a class="terug-link" href="vooraad_beheer.php">Terug naar voorraad</a>
 			</div>
 			<?php if (empty($producten)): ?>
 				<p class="geen-data">Geen voorraadstukken gevonden met deze filters.</p>

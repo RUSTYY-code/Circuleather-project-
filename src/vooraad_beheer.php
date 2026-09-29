@@ -161,7 +161,9 @@
                 <div class="inNout">
                     <?php if ($_SESSION['mag_insert'] ?? false): ?>
                         <div class="inNoutB"><a href="insert.php"><button>insert</button></a></div>
-                        <div class="inNoutB"><a href="change.php"><button>wijzigen</button></a></div>
+                    <?php endif; ?>
+                    <?php if ($_SESSION['mag_wijzigen'] ?? false): ?>
+                       <div class="inNoutB"><a href="change.php"><button>wijzigen</button></a></div>
                     <?php endif; ?>
                     <?php if ($_SESSION['mag_orders'] ?? false): ?>
                         <div class="inNoutB"><a href="orders.php"><button>orders</button></a></div>

@@ -8,6 +8,52 @@
 
     $conn = require_once "partials/dbconnection.php";
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'maak_order') {
+    $locatie = trim($_POST['locatie'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $status = trim($_POST['status'] ?? '');
+    $stukIds = array_values(array_unique(array_filter(array_map('intval', $_POST['stukken'] ?? []))));
+
+    if ($locatie !== '' && $email !== '' && $status !== '' && $stukIds) {
+        $conn->begin_transaction();
+        $stmt = $conn->prepare("INSERT INTO bestellingen (locatie, email, status) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $locatie, $email, $status);
+        $gelukt = $stmt->execute();
+        $orderId = $conn->insert_id;
+        $stmt->close();
+
+        if ($gelukt) {
+            $stukStmt = $conn->prepare("UPDATE voorraad SET bestelling_ID = ?, status = 'besteld' WHERE id = ? AND bestelling_ID = 0 AND status != 'besteld'");
+            foreach ($stukIds as $stukId) {
+                $stukStmt->bind_param("ii", $orderId, $stukId);
+                $stukStmt->execute();
+                if ($stukStmt->affected_rows !== 1) {
+                    $gelukt = false;
+                    break;
+                }
+            }
+            $stukStmt->close();
+        }
+
+        if ($gelukt) {
+            $conn->commit();
+        } else {
+            $conn->rollback();
+        }
+
+        if (!$gelukt) {
+            header("Location: orders.php?fout=aanmaken");
+            exit();
+        }
+
+        header("Location: orders.php?aangemaakt=1");
+        exit();
+    }
+
+    header("Location: orders.php?fout=aanmaken");
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'wijzig_order') {
     $id = (int) ($_POST['id'] ?? 0);
     $locatie = trim($_POST['locatie'] ?? '');
@@ -49,6 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'verwi
     $bestellingen = $bestellingenStmt->get_result()->fetch_all(MYSQLI_ASSOC);
     $bestellingenStmt->close();
 
+    $beschikbareStukkenStmt = $conn->prepare("SELECT id, leertype, kleur, dikteMM, lengteCM, breedteCM, prijs FROM voorraad WHERE bestelling_ID = 0 AND status != 'besteld' ORDER BY id DESC");
+    $beschikbareStukkenStmt->execute();
+    $beschikbareStukken = $beschikbareStukkenStmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $beschikbareStukkenStmt->close();
+
     // Let op: hier GEEN status != 'besteld'-filter op voorraad, zoals op vooraad_beheer.php.
     // De items van een bestelling moeten juist wel zichtbaar zijn in de bestelling zelf.
     $itemsStmt = $conn->prepare("
@@ -83,7 +134,43 @@ SELECT v.bestelling_ID AS bestellingen_ID, 1 AS aantal, v.prijs,
 
         <div class="pagina-kaart invoer-kaart">
             <h1>Bestellingen</h1>
-            <?php if (isset($_GET['gewijzigd'])): ?>
+            <details class="nieuwe-order">
+                <summary>Nieuwe bestelling maken</summary>
+                <form method="POST">
+                    <input type="hidden" name="action" value="maak_order">
+                    <label>Locatie
+                        <input type="text" name="locatie" required>
+                    </label>
+                    <label>Email
+                        <input type="email" name="email" required>
+                    </label>
+                    <label>Status
+                        <input type="text" name="status" value="in behandeling" required>
+                    </label>
+                    <fieldset>
+                        <legend>Leer selecteren</legend>
+                        <?php if (empty($beschikbareStukken)): ?>
+                            <p class="geen-data">Geen beschikbare leerstukken.</p>
+                        <?php else: ?>
+                            <?php foreach ($beschikbareStukken as $stuk): ?>
+                                <label>
+                                    <input type="checkbox" name="stukken[]" value="<?php echo (int) $stuk['id']; ?>">
+                                    #<?php echo (int) $stuk['id']; ?>
+                                    <?php echo htmlspecialchars($stuk['leertype']); ?>,
+                                    <?php echo htmlspecialchars($stuk['kleur']); ?>,
+                                    <?php echo htmlspecialchars($stuk['dikteMM']); ?> mm,
+                                    <?php echo htmlspecialchars($stuk['lengteCM']); ?> x <?php echo htmlspecialchars($stuk['breedteCM']); ?> cm,
+                                    &euro;<?php echo number_format((float) $stuk['prijs'], 2); ?>
+                                </label>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </fieldset>
+                    <button type="submit">Bestelling maken</button>
+                </form>
+            </details>
+            <?php if (isset($_GET['aangemaakt'])): ?>
+                <div class="melding melding-succes">Bestelling aangemaakt.</div>
+            <?php elseif (isset($_GET['gewijzigd'])): ?>
                 <div class="melding melding-succes">Bestelling bijgewerkt.</div>
             <?php elseif (isset($_GET['fout'])): ?>
                 <div class="melding melding-fout">Vul alle verplichte velden in.</div>
@@ -178,5 +265,20 @@ SELECT v.bestelling_ID AS bestellingen_ID, 1 AS aantal, v.prijs,
             </div>
         <?php endforeach; ?>
     </div>
+    <script>
+        document.querySelectorAll('form').forEach(function (form) {
+            if (!form.querySelector('input[name="stukken[]"]')) {
+                return;
+            }
+
+            form.addEventListener('submit', function (event) {
+                var stukken = form.querySelectorAll('input[name="stukken[]"]:checked');
+                if (stukken.length === 0) {
+                    event.preventDefault();
+                    alert('Selecteer minimaal één stuk leer.');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -13,7 +13,7 @@
         $gebruiker = trim($_POST['username'] ?? '');
         $wachtwoord = $_POST['password'] ?? '';
 
-        $stmt = $conn->prepare("SELECT id, password, mag_insert, mag_orders FROM gebruikers WHERE username = ?");
+        $stmt = $conn->prepare("SELECT id, password, mag_insert, mag_wijzigen, mag_orders FROM gebruikers WHERE username = ?");
         $stmt->bind_param("s", $gebruiker);
         $stmt->execute();
         $rij = $stmt->get_result()->fetch_assoc();
@@ -27,6 +27,7 @@
             $_SESSION['ingelogd'] = true;
             $_SESSION['username'] = $gebruiker;
             $_SESSION['mag_insert'] = (bool) $rij['mag_insert'];
+            $_SESSION['mag_wijzigen'] = (bool) $rij['mag_wijzigen'];
             $_SESSION['mag_orders'] = (bool) $rij['mag_orders'];
             $_SESSION['last_activity'] = time();
             header("Location: vooraad_beheer.php");
