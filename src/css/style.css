@@ -7,19 +7,31 @@
    dat automatisch overal in de pagina waar die kleur wordt gebruikt.
    ========================================================================== */
 :root {
-  --color-background: #1a1714;       /* achtergrond van de hele pagina */
-  --color-text: #f0ebe3;             /* gewone tekstkleur */
-  --color-card: #242018;             /* achtergrond van kaarten */
-  --color-accent: #c8a96e;           /* goudkleurige accentkleur (knoppen, prijzen) */
-  --color-accent-text: #1a1714;      /* tekstkleur bovenop de accentkleur */
-  --color-input-background: #2e2820; /* achtergrond van invoervelden */
-  --color-text-muted: #7a6f63;       /* gedempte tekst, zoals labels */
-  --color-border: #3a3028;           /* dunne lijntjes tussen elementen */
-  --color-success: #4ade80;          /* groen, voor geslaagde meldingen */
-  --color-danger: #f87171;           /* rood, voor foutmeldingen */
+  --color-background: #1a1714;
+  /* achtergrond van de hele pagina */
+  --color-text: #f0ebe3;
+  /* gewone tekstkleur */
+  --color-card: #242018;
+  /* achtergrond van kaarten */
+  --color-accent: #c8a96e;
+  /* goudkleurige accentkleur (knoppen, prijzen) */
+  --color-accent-text: #1a1714;
+  /* tekstkleur bovenop de accentkleur */
+  --color-input-background: #2e2820;
+  /* achtergrond van invoervelden */
+  --color-text-muted: #7a6f63;
+  /* gedempte tekst, zoals labels */
+  --color-border: #3a3028;
+  /* dunne lijntjes tussen elementen */
+  --color-success: #4ade80;
+  /* groen, voor geslaagde meldingen */
+  --color-danger: #f87171;
+  /* rood, voor foutmeldingen */
 
-  --font-mono: 'JetBrains Mono', monospace;  /* voor cijfers en prijzen */
-  --font-sans: 'Work Sans', sans-serif;      /* voor gewone tekst */
+  --font-mono: 'JetBrains Mono', monospace;
+  /* voor cijfers en prijzen */
+  --font-sans: 'Work Sans', sans-serif;
+  /* voor gewone tekst */
 }
 
 /* ==========================================================================
@@ -29,7 +41,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   min-height: 100%;
 }
 
@@ -46,9 +59,11 @@ body {
   width: 4px;
   height: 4px;
 }
+
 *::-webkit-scrollbar-track {
   background: transparent;
 }
+
 *::-webkit-scrollbar-thumb {
   background-color: var(--color-border);
   border-radius: 2px;
@@ -59,6 +74,7 @@ h1 {
   font-weight: 600;
   margin: 0 0 16px;
 }
+
 h2 {
   font-size: 1.125rem;
   font-weight: 600;
@@ -87,6 +103,7 @@ button {
   flex-wrap: wrap;
   gap: 16px;
 }
+
 .header .titel img {
   height: auto;
   width: 200px;
@@ -98,10 +115,12 @@ button {
   align-items: center;
   gap: 24px;
 }
+
 .inNout {
   display: flex;
   gap: 8px;
 }
+
 .inNoutB button {
   padding: 8px 16px;
   font-size: 0.75rem;
@@ -113,10 +132,12 @@ button {
   cursor: pointer;
   transition: color .15s, border-color .15s;
 }
+
 .inNoutB button:hover {
   color: var(--color-accent);
   border-color: var(--color-accent);
 }
+
 .inNout-user {
   display: flex;
   align-items: center;
@@ -124,6 +145,7 @@ button {
   font-size: 0.875rem;
   color: var(--color-text-muted);
 }
+
 .inNout-user span {
   color: var(--color-text);
 }
@@ -157,7 +179,8 @@ button {
 
 .content {
   flex: 1;
-  min-width: 0; /* voorkomt dat de grid de pagina breder maakt dan het scherm */
+  min-width: 0;
+  /* voorkomt dat de grid de pagina breder maakt dan het scherm */
 }
 
 /* ==========================================================================
@@ -170,11 +193,13 @@ button {
   color: var(--color-text-muted);
   margin: 0 0 16px;
 }
+
 .filter-selects {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+
 .filter-select {
   width: 100%;
   background: var(--color-input-background);
@@ -186,9 +211,11 @@ button {
   font-family: var(--font-sans);
   cursor: pointer;
 }
+
 .filter-select:focus {
   border-color: var(--color-accent);
 }
+
 .reset-filters {
   display: inline-block;
   margin-top: 16px;
@@ -196,6 +223,7 @@ button {
   color: var(--color-text-muted);
   text-decoration: underline;
 }
+
 .reset-filters:hover {
   color: var(--color-accent);
 }
@@ -211,15 +239,18 @@ button {
   flex-direction: column;
   gap: 12px;
 }
+
 .page-numbers {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
+
 .page-nav {
   display: flex;
   justify-content: space-between;
 }
+
 .page-btn {
   display: inline-flex;
   align-items: center;
@@ -233,15 +264,18 @@ button {
   color: var(--color-text-muted);
   text-decoration: none;
 }
+
 .page-btn:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
+
 .page-btn.active {
   border-color: var(--color-accent);
   color: var(--color-accent-text);
   background: var(--color-accent);
 }
+
 .page-btn.disabled {
   opacity: .35;
   pointer-events: none;
@@ -273,12 +307,14 @@ button {
   padding-bottom: 12px;
   border-bottom: 1px solid var(--color-border);
 }
+
 .naam-box span:first-child {
   font-size: 0.625rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: var(--color-text-muted);
 }
+
 .naam-box span:last-child {
   font-weight: 600;
   text-transform: capitalize;
@@ -289,14 +325,17 @@ button {
   flex-direction: column;
   gap: 6px;
 }
+
 .spec-row {
   display: flex;
   justify-content: space-between;
   font-size: 0.875rem;
 }
+
 .spec-row span:first-child {
   color: var(--color-text-muted);
 }
+
 .spec-row span:last-child {
   font-family: var(--font-mono);
 }
@@ -312,6 +351,88 @@ button {
   text-align: right;
 }
 
+.product-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.product-actions form {
+  margin: 0;
+}
+
+.change-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.change-heading h1 {
+  margin-bottom: 4px;
+}
+
+.change-heading p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.change-editor {
+  border-top: 1px solid var(--color-border);
+  padding-top: 12px;
+}
+
+.change-editor summary {
+  color: var(--color-accent);
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.change-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 14px;
+}
+
+.change-save {
+  grid-column: 1 / -1;
+}
+
+.change-message {
+  margin: 16px 32px 0;
+}
+
+@media (max-width: 760px) {
+  .main-container {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .filter-selects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .change-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .change-form {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ==========================================================================
    SUBPAGINA'S: login, registreren, ontvangst invoeren, bestellingen
    Deze pagina's hebben geen zijbalk, maar één of meer gecentreerde
@@ -320,6 +441,7 @@ button {
 body.subpage {
   padding: 32px;
 }
+
 body.subpage-gecentreerd {
   min-height: 100vh;
   display: flex;
@@ -341,6 +463,7 @@ body.subpage-gecentreerd {
   color: var(--color-text-muted);
   text-decoration: none;
 }
+
 .terug-link:hover {
   color: var(--color-accent);
 }
@@ -357,11 +480,13 @@ body.subpage-gecentreerd {
   width: 100%;
   max-width: 360px;
 }
+
 .auth-kaart form {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+
 .auth-kaart p {
   margin-top: 16px;
   font-size: 0.875rem;
@@ -384,11 +509,13 @@ body.subpage-gecentreerd {
   margin-bottom: 16px;
   border: 1px solid;
 }
+
 .melding-fout {
   color: var(--color-danger);
   background: rgba(127, 29, 29, .2);
   border-color: rgba(153, 27, 27, .3);
 }
+
 .melding-succes {
   color: var(--color-success);
   background: rgba(20, 83, 45, .2);
@@ -413,6 +540,7 @@ body.subpage-gecentreerd {
   outline: none;
   font-family: var(--font-sans);
 }
+
 .form-input:focus {
   border-color: var(--color-accent);
 }
@@ -437,6 +565,7 @@ label {
   cursor: pointer;
   transition: opacity .15s;
 }
+
 .btn-primary:hover {
   opacity: .9;
 }
@@ -450,6 +579,7 @@ label {
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
+
 .ontvangst-header label {
   flex: 1;
   min-width: 180px;
@@ -467,6 +597,7 @@ table {
   border-collapse: collapse;
   font-size: 0.875rem;
 }
+
 th {
   text-align: left;
   padding: 10px 12px;
@@ -477,6 +608,7 @@ th {
   border-bottom: 1px solid var(--color-border);
   white-space: nowrap;
 }
+
 td {
   padding: 8px 12px;
   border-bottom: 1px solid var(--color-border);
@@ -493,6 +625,7 @@ td {
   font-family: var(--font-sans);
   outline: none;
 }
+
 .items-table input:focus {
   border-color: var(--color-accent);
 }
@@ -508,6 +641,7 @@ td {
   gap: 12px;
   margin-bottom: 12px;
 }
+
 .order-status {
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -516,6 +650,7 @@ td {
   border: 1px solid var(--color-accent);
   color: var(--color-accent);
 }
+
 .order-meta {
   display: flex;
   gap: 20px;

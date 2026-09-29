@@ -8,6 +8,42 @@
 
     $conn = require_once "partials/dbconnection.php";
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'wijzig_order') {
+    $id = (int) ($_POST['id'] ?? 0);
+    $locatie = trim($_POST['locatie'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $status = trim($_POST['status'] ?? '');
+    $verstuurdatum = trim($_POST['verstuurdatum'] ?? '') ?: null;
+
+    if ($id > 0 && $locatie !== '' && $email !== '' && $status !== '') {
+        $stmt = $conn->prepare("UPDATE bestellingen SET locatie = ?, email = ?, status = ?, verstuurdatum = ? WHERE ID = ?");
+        $stmt->bind_param("ssssi", $locatie, $email, $status, $verstuurdatum, $id);
+        $stmt->execute();
+        $stmt->close();
+        header("Location: orders.php?gewijzigd=1");
+        exit();
+    }
+
+    header("Location: orders.php?fout=wijziging");
+    exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'verwijder_order') {
+    $id = (int) $_POST['id'];
+
+    // Free the leather pieces first, otherwise they stay "besteld" forever
+    $stmt = $conn->prepare("UPDATE voorraad SET bestelling_ID = 0, status = 'beschikbaar' WHERE bestelling_ID = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+
+    $stmt = $conn->prepare("DELETE FROM bestellingen WHERE ID = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+
+    header("Location: orders.php");
+    exit();
+}
+
     $bestellingenStmt = $conn->prepare("SELECT ID, locatie, email, status, besteldatum, verstuurdatum FROM bestellingen ORDER BY besteldatum DESC");
     $bestellingenStmt->execute();
     $bestellingen = $bestellingenStmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -47,6 +83,11 @@ SELECT v.bestelling_ID AS bestellingen_ID, 1 AS aantal, v.prijs,
 
         <div class="pagina-kaart invoer-kaart">
             <h1>Bestellingen</h1>
+            <?php if (isset($_GET['gewijzigd'])): ?>
+                <div class="melding melding-succes">Bestelling bijgewerkt.</div>
+            <?php elseif (isset($_GET['fout'])): ?>
+                <div class="melding melding-fout">Vul alle verplichte velden in.</div>
+            <?php endif; ?>
             <?php if (empty($bestellingen)): ?>
                 <p class="geen-data">Er zijn nog geen bestellingen.</p>
             <?php endif; ?>
@@ -70,6 +111,31 @@ SELECT v.bestelling_ID AS bestellingen_ID, 1 AS aantal, v.prijs,
                     <span>Besteld: <?php echo htmlspecialchars($bestelling['besteldatum']); ?></span>
                     <span>Verstuurd: <?php echo $bestelling['verstuurdatum'] ? htmlspecialchars($bestelling['verstuurdatum']) : '-'; ?></span>
                 </div>
+                <form method="POST" onsubmit="return confirm('Weet je het zeker?');">
+                    <input type="hidden" name="action" value="verwijder_order">
+                    <input type="hidden" name="id" value="<?php echo (int) $bestelling['ID']; ?>">
+                    <button type="submit">Verwijderen</button>
+                </form>
+                <details>
+                    <summary>Bestelling wijzigen</summary>
+                    <form method="POST">
+                        <input type="hidden" name="action" value="wijzig_order">
+                        <input type="hidden" name="id" value="<?php echo (int) $bestelling['ID']; ?>">
+                        <label>Locatie
+                            <input type="text" name="locatie" value="<?php echo htmlspecialchars($bestelling['locatie'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                        </label>
+                        <label>Email
+                            <input type="email" name="email" value="<?php echo htmlspecialchars($bestelling['email'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                        </label>
+                        <label>Status
+                            <input type="text" name="status" value="<?php echo htmlspecialchars($bestelling['status'], ENT_QUOTES, 'UTF-8'); ?>" required>
+                        </label>
+                        <label>Verstuurdatum
+                            <input type="date" name="verstuurdatum" value="<?php echo htmlspecialchars($bestelling['verstuurdatum'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                        </label>
+                        <button type="submit">Wijzigingen opslaan</button>
+                    </form>
+                </details>
 
                 <?php if (empty($items)): ?>
                     <p class="geen-data">Geen items in deze bestelling.</p>

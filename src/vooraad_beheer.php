@@ -161,6 +161,7 @@
                 <div class="inNout">
                     <?php if ($_SESSION['mag_insert'] ?? false): ?>
                         <div class="inNoutB"><a href="insert.php"><button>insert</button></a></div>
+                        <div class="inNoutB"><a href="change.php"><button>wijzigen</button></a></div>
                     <?php endif; ?>
                     <?php if ($_SESSION['mag_orders'] ?? false): ?>
                         <div class="inNoutB"><a href="orders.php"><button>orders</button></a></div>
@@ -175,6 +176,9 @@
 
         <?php if (isset($_GET['ontvangst'])): ?>
             <div class="melding-banner">Ontvangst #<?php echo (int) $_GET['ontvangst']; ?> opgeslagen — <?php echo (int) ($_GET['aantal'] ?? 0); ?> stuk(s) toegevoegd aan de voorraad.</div>
+        <?php endif; ?>
+        <?php if (isset($_GET['verwijderd'])): ?>
+            <div class="melding-banner">Voorraadstuk verwijderd.</div>
         <?php endif; ?>
 
         <div class="main-container">
@@ -234,7 +238,7 @@
                                 <div class="spec-row"><span>Gewicht</span><span><?php echo htmlspecialchars($product['gewichtG']); ?> g</span></div>
                                 <div class="spec-row"><span>Kleur</span><span><?php echo htmlspecialchars($product['kleur']); ?></span></div>
                             </div>
-                            <div class="hoeveelheid-box">&euro;<?php echo htmlspecialchars(number_format((float) $product['prijs'], 2)); ?></div>
+                            <div class="hoeveelheid-box">&euro;<?php echo htmlspecialchars(number_format((float) $product['prijs'], 2)); ?> p/kg</div>
                         </div>
                     <?php endforeach; ?>
                 </div>
